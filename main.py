@@ -29,10 +29,12 @@ class Game:
         self.single_sword_sprite = pygame.sprite.Group()
         self.elves_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
+        self.blood_effects_list = pygame.sprite.Group()
 
         self.state = 'START'
         self.scene = 1
         self.max_scenes = 3
+        self.bg = None
 
         self.player = None
         self.platform_list = None
@@ -42,6 +44,7 @@ class Game:
         self.music_channel.set_volume(0.3)
 
         self.create_elves()
+        self.elves_moving = False
 
     def create_elves(self):
         puck = objects.Elf(-50, 300, WIN_WIDTH+50, 'puck', 4)
@@ -54,7 +57,7 @@ class Game:
 
     def create_scene_1(self):
         self.bg = pygame.image.load("images/bgs/bg1.png")
-        self.player = objects.Player(20, 700, 0, 'guts_1', 17)
+        self.player = objects.Player(20, 700, 0, 'guts_1', 17, 3)
 
         sword_image = pygame.image.load('images/objects/sword_1.png').convert_alpha()
         sword_image = pygame.transform.rotate(sword_image, -90)
@@ -70,6 +73,10 @@ class Game:
         self.platform_list = pygame.sprite.Group()
         self.create_platforms(scene_1_platforms)
         self.player.platforms = self.platform_list
+
+        level_sign = objects.LevelSign(WIN_WIDTH-120, WIN_HEIGHT-120)
+        self.all_sprite_list.add(level_sign)
+
         self.player.elves = self.elves_list
 
         self.enemy_list = pygame.sprite.Group()
@@ -95,7 +102,7 @@ class Game:
         self.bg = pygame.image.load("images/bgs/bg2.png")
         self.all_sprite_list.empty()
         self.single_sword_sprite.empty()
-        self.player = objects.Player(20, 700, 1, 'guts_2', 18)
+        self.player = objects.Player(20, 700, 1, 'guts_2', 18, self.player.lives)
 
         sword_image = pygame.image.load('images/objects/sword_2.png').convert_alpha()
         sword_image = pygame.transform.rotate(sword_image, -45)
@@ -110,6 +117,10 @@ class Game:
         self.platform_list = pygame.sprite.Group()
         self.create_platforms(scene_2_platforms)
         self.player.platforms = self.platform_list
+
+        level_sign = objects.LevelSign(WIN_WIDTH-120, WIN_HEIGHT-120)
+        self.all_sprite_list.add(level_sign)
+
         self.player.elves = self.elves_list
 
         self.enemy_list = pygame.sprite.Group()
@@ -131,7 +142,7 @@ class Game:
         self.bg = pygame.image.load("images/bgs/bg3.png")
         self.all_sprite_list.empty()
         self.single_sword_sprite.empty()
-        self.player = objects.Player(20, 700, 1, 'guts_3', 18)
+        self.player = objects.Player(20, 700, 1, 'guts_3', 18, self.player.lives)
 
         sword_image = pygame.image.load('images/objects/sword_2.png').convert_alpha()
         sword_image = pygame.transform.rotate(sword_image, -45)
@@ -146,6 +157,10 @@ class Game:
         self.platform_list = pygame.sprite.Group()
         self.create_platforms(scene_3_platforms)
         self.player.platforms = self.platform_list
+
+        level_sign = objects.LevelSign(WIN_WIDTH-120, WIN_HEIGHT-120)
+        self.all_sprite_list.add(level_sign)
+
         self.player.elves = self.elves_list
 
         self.enemy_list = pygame.sprite.Group()
@@ -168,10 +183,11 @@ class Game:
             self.all_sprite_list.add(platform)
 
     def move_elves(self):
-        self.elf_sound.play()
-        for elf in self.elves_list:
-            elf.rect.y = random.randint(WIN_HEIGHT//2, WIN_HEIGHT-50)
-            elf.moving = True
+        if not self.elves_moving:
+            self.elf_sound.play()
+            for elf in self.elves_list:
+                elf.rect.y = random.randint(WIN_HEIGHT//2, WIN_HEIGHT-50)
+                elf.moving = True
 
     def handle_scene(self, event):
         if self.state == "GAME":
@@ -213,6 +229,7 @@ class Game:
 
             self.screen.blit(self.bg, (0, 0))
 
+            self.blood_effects_list.draw(self.screen)
             self.all_sprite_list.draw(self.screen)
             self.elves_list.draw(self.screen)
 
@@ -228,8 +245,10 @@ class Game:
             self.screen.blit(rules_text_1, (0, 200))
             self.screen.blit(rules_text_2, (0, 300))
             self.screen.blit(rules_text_3, (0, 400))
-            self.screen.blit(music_label_1, (1100, 400))
-            self.screen.blit(music_label_2, (1100, 500))
+            self.screen.blit(music_label_1, (1050, 200))
+            self.screen.blit(music_label_2, (1050, 300))
+            self.screen.blit(gifs_label_1, (1050, 500))
+            self.screen.blit(gifs_label_2, (1050, 600))
 
         elif self.state == "DEATH":
             self.screen.blit(self.bg_death, (WIN_WIDTH // 2 - 300, 0))
@@ -242,7 +261,13 @@ class Game:
     def detect_collisions(self):
         for enemy in self.enemy_list:
             if pygame.sprite.collide_rect(enemy, self.player.sword) and self.player.attacking:
+                blood = objects.BloodEffect(enemy.rect.x, enemy.rect.y)
+                self.blood_effects_list.add(blood)
                 enemy.kill()
+
+    def get_objects_feedback(self):
+        for elf in self.elves_list:
+            self.elves_moving = elf.moving
 
     def run(self):
         run = True
@@ -256,9 +281,10 @@ class Game:
                 self.handle_scene(event)
 
             if self.state == "GAME":
+                self.blood_effects_list.update()
                 self.all_sprite_list.update()
                 self.elves_list.update()
-                if self.player.rect.x > WIN_WIDTH - 100 and self.player.rect.y > WIN_HEIGHT - 200:
+                if self.player.rect.x > WIN_WIDTH - 200 and self.player.rect.y > WIN_HEIGHT - 200:
                     if len(self.enemy_list) == 0:
                         self.scene += 1
                         if self.scene > self.max_scenes:
@@ -280,6 +306,7 @@ class Game:
                         break
 
                 self.detect_collisions()
+                self.get_objects_feedback()
             self.draw_scene()
             pygame.display.update()
             self.clock.tick(FPS)

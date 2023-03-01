@@ -5,6 +5,30 @@ import utils
 pygame.mixer.init()
 
 
+class BloodEffect(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+
+        self.frames_qty = 14
+        self.frames = utils.get_anim_frames('blood_effect', self.frames_qty)
+        self.image = self.frames[0]
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+        self.anim_counter = 0
+
+    def update(self):
+        self.anim_counter += 1
+        if self.anim_counter >= FPS:
+            self.anim_counter = 0
+
+        frame = self.anim_counter % len(self.frames)
+        self.image = self.frames[frame]
+
+        if frame == self.frames_qty - 1:
+            self.kill()
+
+
 class PlayerSword(pygame.sprite.Sprite):
     def __init__(self, x, y, img):
         super().__init__()
@@ -22,14 +46,14 @@ class Player(pygame.sprite.Sprite):
     sword_clang = pygame.mixer.Sound("sounds/clangberserk.mp3")
     guts_scream = pygame.mixer.Sound("sounds/guts_scream_1.mp3")
 
-    def __init__(self, x, y, sword_number, img, frames_num):
+    def __init__(self, x, y, sword_number, img, frames_num, lives):
         super().__init__()
 
         self.sword_number = sword_number
         self.change_x = 0
         self.change_y = 0
         self.speed = 10
-        self.lives = 3
+        self.lives = lives
 
         self.platforms = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
@@ -95,7 +119,11 @@ class Player(pygame.sprite.Sprite):
 
         self.calc_grav()
 
+        prev_coord = self.rect.x
         self.rect.x += self.change_x
+
+        if -10 > self.rect.x or self.rect.x > WIN_WIDTH - 100:
+            self.rect.x = prev_coord
 
         block_hit_list = pygame.sprite.spritecollide(self, self.platforms, False)
         for block in block_hit_list:
@@ -156,6 +184,7 @@ class Player(pygame.sprite.Sprite):
             self.anim_counter = 0
 
         if self.direction == "R":
+
             frame = self.anim_counter % len(self.walking_frames_r)
             self.image = self.walking_frames_r[frame]
         else:
@@ -173,6 +202,18 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, img='images/objects/platform.png'):
         super().__init__()
         self.image = pygame.image.load(img).convert_alpha()
+
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
+
+class LevelSign(pygame.sprite.Sprite):
+
+    def __init__(self, x, y, img='images/objects/level_sign.png'):
+        super().__init__()
+        self.image = pygame.image.load(img).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (120, 120))
 
         self.rect = self.image.get_rect()
         self.rect.y = y

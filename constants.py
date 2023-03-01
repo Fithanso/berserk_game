@@ -16,12 +16,17 @@ GRAY = (200, 200, 200)
 FONT = pygame.font.SysFont('Arial', 32, True)
 
 start_text_1 = FONT.render('PRESS SPACE TO START GAME', 1, (255, 255, 255))
-rules_text_1 = FONT.render('move - wasd', 1, (255, 255, 255))
-rules_text_2 = FONT.render('attack - space', 1, (255, 255, 255))
-rules_text_3 = FONT.render('e - call for elves (lvls 2&3)', 1, (255, 255, 255))
+death_text = FONT.render('YOUR STORY TRAGICALLY ENDED', 1, (255, 255, 255))
+
+rules_text_1 = FONT.render('wad - move', 1, (255, 255, 255))
+rules_text_2 = FONT.render('space - attack', 1, (255, 255, 255))
+rules_text_3 = FONT.render('e - call for elves to heal (lvls 2&3)', 1, (255, 255, 255))
+
 music_label_1 = FONT.render('MUSIC BY', 1, (255, 255, 255))
 music_label_2 = FONT.render('SUSUMU HIRASAWA', 1, (255, 255, 255))
-death_text = FONT.render('YOUR STORY TRAGICALLY ENDED', 1, (255, 255, 255))
+
+gifs_label_1 = FONT.render('CHARACTER SPRITES BY', 1, (255, 255, 255))
+gifs_label_2 = FONT.render('BENEDIQUE', 1, (255, 255, 255))
 
 heal_cd = 10
 
