@@ -246,9 +246,11 @@ class Game:
             self.screen.blit(rules_text_2, (0, 300))
             self.screen.blit(rules_text_3, (0, 400))
             self.screen.blit(music_label_1, (1050, 200))
-            self.screen.blit(music_label_2, (1050, 300))
-            self.screen.blit(gifs_label_1, (1050, 500))
-            self.screen.blit(gifs_label_2, (1050, 600))
+            self.screen.blit(music_label_2, (1050, 250))
+            self.screen.blit(gifs_label_1, (1050, 400))
+            self.screen.blit(gifs_label_2, (1050, 450))
+            self.screen.blit(author_label_1, (1050, 600))
+            self.screen.blit(author_label_2, (1050, 650))
 
         elif self.state == "DEATH":
             self.screen.blit(self.bg_death, (WIN_WIDTH // 2 - 300, 0))

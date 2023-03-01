@@ -28,6 +28,10 @@ music_label_2 = FONT.render('SUSUMU HIRASAWA', 1, (255, 255, 255))
 gifs_label_1 = FONT.render('CHARACTER SPRITES BY', 1, (255, 255, 255))
 gifs_label_2 = FONT.render('BENEDIQUE', 1, (255, 255, 255))
 
+author_label_1 = FONT.render('GAME BY', 1, (255, 255, 255))
+author_label_2 = FONT.render('FITHANSO', 1, (255, 255, 255))
+
+
 heal_cd = 10
 
 scene_1_platforms = [
