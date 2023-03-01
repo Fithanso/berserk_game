@@ -241,6 +241,7 @@ class Game:
 
         elif self.state == "START":
             self.screen.blit(self.bg_start, (WIN_WIDTH // 2 - 300, 0))
+            self.screen.blit(version_label, (0, 0))
             self.screen.blit(start_text_1, (0, 500))
             self.screen.blit(rules_text_1, (0, 200))
             self.screen.blit(rules_text_2, (0, 300))

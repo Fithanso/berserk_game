@@ -31,6 +31,7 @@ gifs_label_2 = FONT.render('BENEDIQUE', 1, (255, 255, 255))
 author_label_1 = FONT.render('GAME BY', 1, (255, 255, 255))
 author_label_2 = FONT.render('FITHANSO', 1, (255, 255, 255))
 
+version_label = FONT.render('v1.1', 1, (255, 255, 255))
 
 heal_cd = 10
 
